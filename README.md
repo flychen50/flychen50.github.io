@@ -1,13 +1,13 @@
-# flychen50.github.io · Astro Blog Draft
+# flychen50.github.io · Transformer & GPT Notes
 
-把 GitHub Pages 个人站点迁移到 Astro，首发文章是「Transformer 原理 · 图文速通」，并带来博客技术栈建议。页面使用暗色霓虹视觉与纯 SVG 示意图，可直接作为未来博客的首页或文章模版。
+这是一个基于 Astro 的静态博客，专注分享 Transformer 以及 GPT-1/2/3 的核心原理、架构与训练技巧。页面使用暗色霓虹视觉与纯 SVG 示意图，内容聚焦技术拆解。
 
 ## 技术栈
 
-- [Astro 5](https://astro.build) · 只输出静态文件，适合 GitHub Pages
-- 原子化设计的自定义 CSS（`src/styles/global.css`），后续可升级 Tailwind/UnoCSS
-- 纯 `.astro` 页面与 layout（`src/pages/index.astro` + `src/layouts/BaseLayout.astro`），方便逐步替换为多篇文章
-- 自定义域名 `blog.97551200.xyz` 已复制到 `public/CNAME`，构建时也会带上
+- [Astro 5](https://astro.build) 生成静态站点
+- 自定义 CSS（`src/styles/global.css`），可按需升级 Tailwind/UnoCSS
+- 纯 `.astro` 页面与 layout（`src/pages/*` + `src/layouts/BaseLayout.astro`），便于后续迁移到 content collections
+- 自定义域名 `blog.97551200.xyz` 通过 `public/CNAME` 保持生效
 
 ## 本地开发
 
@@ -49,7 +49,7 @@ npm run preview    # 预览构建结果
 
 ## 已完成的文章
 
-- `/` Transformer 原理 + 博客技术栈建议
+- `/` Transformer 原理图解
 - `/gpt-1` 预训练 + 任务微调
 - `/gpt-2` 大规模自回归与 zero-shot
 - `/gpt-3` 提示学习与 175B 模型
