@@ -1,0 +1,137 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteNav from "../components/SiteNav.astro";
+
+const title = "GPT-1 原理：预训练 + 微调的诞生";
+const description =
+  "回顾 2018 年 GPT-1 如何将无监督语言建模与任务微调结合，奠定通用语言模型范式。";
+---
+
+<BaseLayout title={title} description={description}>
+  <SiteNav current="/gpt-1" />
+  <header class="article-hero">
+    <a class="back-link" href="/">← 返回 Transformer 专题</a>
+    <span class="badge">2018 · OpenAI</span>
+    <h1>{title}</h1>
+    <p>
+      GPT-1（Generative Pre-Training）是第一个把「大规模无监督预训练」与「有监督微调」结合的 Transformer
+      解码器模型。它使用 BookCorpus（7,000 多本未出版小说）预训练，然后通过任务特定头在 GLUE
+      等任务上微调，展示了语言模型可迁移的潜力。
+    </p>
+    <p class="article-meta">重点：两阶段训练、12 层 Decoder、任务特化线性头</p>
+  </header>
+  <main class="article">
+    <article>
+      <h3>1. 为什么要预训练？</h3>
+      <p>
+        2018 年之前，NLP 常常为每个任务单独训练模型，数据依赖大、泛化差。GPT-1
+        认为语言建模就是一个通用的「自监督」目标：预测下一个 token 的概率。当模型学会语言结构后，只需少量有标签数据就能微调到具体任务。
+      </p>
+      <div class="callout">
+        <h4>核心公式</h4>
+        <p>
+          预训练目标是最大化 <code>∑ log P(w_t | context_t; θ)</code>。微调阶段在 Transformer 顶部添加任务层，最小化对应的
+          cross-entropy。
+        </p>
+      </div>
+    </article>
+    <article>
+      <h3>2. 两阶段训练流程</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 800 300" role="img" aria-labelledby="gpt1-pipeline">
+          <title id="gpt1-pipeline">GPT-1 训练流水线</title>
+          <defs>
+            <marker
+              id="gpt1-arrow"
+              markerWidth="10"
+              markerHeight="10"
+              refX="4"
+              refY="3"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M0,0 L0,6 L6,3 z" fill="#cbd5f5" />
+            </marker>
+          </defs>
+          <rect x="50" y="40" width="220" height="220" rx="24" class="svg-block svg-block--encoder" />
+          <text x="90" y="90" class="svg-heading">阶段 1：无监督</text>
+          <text x="80" y="130" class="svg-body">数据：BookCorpus</text>
+          <text x="80" y="160" class="svg-body">目标：语言建模</text>
+          <text x="80" y="190" class="svg-body">结果：预训练参数 θ</text>
+          <rect x="330" y="40" width="420" height="220" rx="24" class="svg-block svg-block--decoder" />
+          <text x="380" y="90" class="svg-heading">阶段 2：有监督微调</text>
+          <text x="360" y="135" class="svg-body">添加任务头（分类、蕴含、问答）</text>
+          <text x="360" y="165" class="svg-body">冻结/微调底座权重</text>
+          <text x="360" y="195" class="svg-body">多任务联合训练，提升泛化</text>
+          <line x1="270" y1="150" x2="330" y2="150" class="svg-arrow" marker-end="url(#gpt1-arrow)" />
+          <text x="275" y="140" class="svg-body">θ 迁移</text>
+        </svg>
+        <figcaption>预训练 + 微调的二阶段 pipeline 是后续 GPT/BERT/T5 的共同底座。</figcaption>
+      </figure>
+      <ul>
+        <li>
+          <strong>预训练设置：</strong>上下文窗口 512，12 层 Transformer Decoder，隐藏维度 768，注意力头 12，参数约
+          117M。
+        </li>
+        <li>
+          <strong>微调策略：</strong>在每个任务上附加一个浅层分类器或指针网络，部分任务引入任务描述 + 输入拼接。
+        </li>
+      </ul>
+    </article>
+    <article>
+      <h3>3. 模型解剖</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 820 320" role="img" aria-labelledby="gpt1-architecture">
+          <title id="gpt1-architecture">GPT-1 解码器堆叠</title>
+          <rect x="40" y="30" width="740" height="60" rx="18" class="svg-block svg-block--encoder" />
+          <text x="60" y="70" class="svg-body">Token Embedding + Learned Positional Embedding</text>
+          <rect x="40" y="120" width="160" height="160" rx="18" class="svg-block svg-block--decoder" />
+          <text x="60" y="150" class="svg-body">Masked</text>
+          <text x="70" y="170" class="svg-body">Self</text>
+          <text x="60" y="190" class="svg-body">Attention</text>
+          <rect x="240" y="120" width="160" height="160" rx="18" class="svg-block svg-block--decoder" />
+          <text x="270" y="180" class="svg-body">Add + LN</text>
+          <rect x="440" y="120" width="160" height="160" rx="18" class="svg-block svg-block--decoder" />
+          <text x="470" y="150" class="svg-body">FFN</text>
+          <text x="460" y="180" class="svg-body">GELU</text>
+          <rect x="640" y="120" width="140" height="160" rx="18" class="svg-block svg-block--decoder" />
+          <text x="650" y="150" class="svg-body">Add + LN</text>
+          <text x="650" y="200" class="svg-body">× 12 层</text>
+        </svg>
+        <figcaption>12 层解码器，每层包含 Masked Self-Attention + 前馈网络 + 残差层归一化。</figcaption>
+      </figure>
+      <ul>
+        <li>只保留解码器堆叠（没有 encoder），依靠 mask 强制自回归。</li>
+        <li>前馈层使用 GELU 激活；LayerNorm 放在残差之后（Post-LN）。</li>
+        <li>微调阶段在最后一层上接 task head，例如 MLP 分类器或 pointer network。</li>
+      </ul>
+    </article>
+    <article>
+      <h3>4. 多任务适配技巧</h3>
+      <ul>
+        <li>
+          <strong>自然语言提示：</strong>在输入前拼接诸如 “Question: … Answer:” 的提示，统一不同任务的输入格式。
+        </li>
+        <li>
+          <strong>Span Prediction：</strong>对于问答任务，模型预测 answer span 的起止位置（类似 Pointer
+          Networks）。
+        </li>
+        <li>
+          <strong>无标签数据增强：</strong>使用语言模型生成的候选句子来扩展训练数据，缓解过拟合。
+        </li>
+      </ul>
+    </article>
+    <article>
+      <h3>5. 局限与启发</h3>
+      <p>虽然 GPT-1 在多个 GLUE 任务上领先于同年代模型，但仍存在如下限制：</p>
+      <ul>
+        <li>数据规模小：BookCorpus 仅 ~5GB 文本，语域单一。</li>
+        <li>任务仍需微调：模型无法直接零样本推理。</li>
+        <li>上下文长度 512，无法覆盖长文本推理。</li>
+      </ul>
+      <p>
+        即便如此，GPT-1 证明了「先学语言，再学任务」的可行性，并为 GPT-2 的扩大规模与 zero-shot 实验铺平道路。
+      </p>
+    </article>
+  </main>
+</BaseLayout>

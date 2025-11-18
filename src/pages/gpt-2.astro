@@ -1,0 +1,126 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteNav from "../components/SiteNav.astro";
+
+const title = "GPT-2 原理：大数据与零样本崛起";
+const description =
+  "解析 GPT-2 如何通过 WebText 语料、长上下文与改进的解码策略实现高质量生成与 zero-shot 能力。";
+---
+
+<BaseLayout title={title} description={description}>
+  <SiteNav current="/gpt-2" />
+  <header class="article-hero">
+    <a class="back-link" href="/">← 返回 Transformer 专题</a>
+    <span class="badge">2019 · OpenAI</span>
+    <h1>{title}</h1>
+    <p>
+      GPT-2 在 GPT-1 的解码器架构基础上做到了两件事：把数据扩大到 40GB 的 WebText，并尝试在没有任务微调的情况下直接用提示做
+      zero-shot 推理。1.5B 参数版本在文本生成、摘要、翻译上展示了惊人的泛化。
+    </p>
+    <p class="article-meta">关键词：WebText、零样本评估、Top-k/核采样</p>
+  </header>
+  <main class="article">
+    <article>
+      <h3>1. WebText 数据构建</h3>
+      <p>OpenAI 抓取 Reddit 中 karma ≥ 3 的外链，过滤得到约 80 亿 token 的多领域文本（不含 Wikipedia），命名为 WebText。</p>
+      <ul>
+        <li>多领域：新闻、论坛、代码片段、诗歌。</li>
+        <li>语言噪声少：使用质量投票过滤，保留更自然的写作风格。</li>
+        <li>加入 Byte Pair Encoding（50k 词表），便于跨语言和符号。</li>
+      </ul>
+    </article>
+    <article>
+      <h3>2. 模型规模梯度</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 820 280" role="img" aria-labelledby="gpt2-sizes">
+          <title id="gpt2-sizes">GPT-2 参数梯度</title>
+          <defs>
+            <linearGradient id="gpt2-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#f472b6" />
+            </linearGradient>
+          </defs>
+          <rect x="80" y="120" width="80" height="120" rx="18" fill="url(#gpt2-grad)" opacity="0.5" />
+          <rect x="220" y="90" width="80" height="150" rx="18" fill="url(#gpt2-grad)" opacity="0.6" />
+          <rect x="360" y="60" width="80" height="180" rx="18" fill="url(#gpt2-grad)" opacity="0.7" />
+          <rect x="500" y="30" width="80" height="210" rx="18" fill="url(#gpt2-grad)" opacity="0.8" />
+          <rect x="640" y="10" width="80" height="230" rx="18" fill="url(#gpt2-grad)" opacity="0.9" />
+          <text x="85" y="255" class="svg-body">124M</text>
+          <text x="225" y="255" class="svg-body">355M</text>
+          <text x="365" y="255" class="svg-body">774M</text>
+          <text x="505" y="255" class="svg-body">1.5B</text>
+          <text x="645" y="255" class="svg-body">Release?</text>
+          <text x="90" y="110" class="svg-body">12L · 12H</text>
+          <text x="230" y="80" class="svg-body">24L · 16H</text>
+          <text x="370" y="50" class="svg-body">36L · 20H</text>
+          <text x="510" y="20" class="svg-body">48L · 25H</text>
+          <text x="650" y="0" class="svg-body">“完整”GPT-2</text>
+        </svg>
+        <figcaption>不同大小共享架构，仅通过层数、宽度、头数扩展；最终 1.5B 版本最初未完全开放。</figcaption>
+      </figure>
+      <p>
+        通过逐步扩大参数，OpenAI 分析「增加规模是否持续带来收益」，结论是：生成质量与任务评估得分几乎与 log(参数量) 线性相关。
+      </p>
+    </article>
+    <article>
+      <h3>3. 序列长度与优化</h3>
+      <ul>
+        <li>上下文长度从 512 提升到 1024，使得生成更加连贯（但训练时显存压力大）。</li>
+        <li>采用改进的 LayerNorm（仍为 Post-LN），并使用更大 batch（512 sequences）。</li>
+        <li>学习率采用 cosine decay + warmup 2000 steps，优化器为 Adam。</li>
+      </ul>
+    </article>
+    <article>
+      <h3>4. 推理：Top-k & 核采样</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 820 260" role="img" aria-labelledby="gpt2-sampling">
+          <defs>
+            <marker
+              id="gpt2-arrow"
+              markerWidth="10"
+              markerHeight="10"
+              refX="4"
+              refY="3"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M0,0 L0,6 L6,3 z" fill="#cbd5f5" />
+            </marker>
+          </defs>
+          <title id="gpt2-sampling">Top-k / 核采样</title>
+          <rect x="60" y="40" width="220" height="180" rx="24" class="svg-block svg-block--encoder" />
+          <text x="80" y="80" class="svg-heading">Top-k</text>
+          <text x="80" y="120" class="svg-body">排序概率</text>
+          <text x="80" y="150" class="svg-body">保留 k=40</text>
+          <text x="80" y="180" class="svg-body">剩余归一化再采样</text>
+          <rect x="340" y="40" width="220" height="180" rx="24" class="svg-block svg-block--decoder" />
+          <text x="360" y="80" class="svg-heading">核采样 (Top-p)</text>
+          <text x="360" y="120" class="svg-body">累计概率 ≥ p=0.9</text>
+          <text x="360" y="150" class="svg-body">动态候选集合</text>
+          <text x="360" y="180" class="svg-body">避免重复/崩坏</text>
+          <rect x="620" y="40" width="140" height="180" rx="24" class="svg-block svg-block--op" />
+          <text x="640" y="90" class="svg-heading">温度 τ</text>
+          <text x="630" y="130" class="svg-body">Softmax(logits/τ)</text>
+          <text x="630" y="160" class="svg-body">控制多样性</text>
+          <line x1="280" y1="130" x2="340" y2="130" class="svg-arrow" marker-end="url(#gpt2-arrow)" />
+          <line x1="560" y1="130" x2="620" y2="130" class="svg-arrow" marker-end="url(#gpt2-arrow)" />
+        </svg>
+        <figcaption>解码时通过限制候选集合 + 温度采样来兼顾流畅与多样性，降低模型“胡说”概率。</figcaption>
+      </figure>
+      <p>
+        这些采样技巧后来成为 GPT 系列和大多文本生成模型的默认设置。
+      </p>
+    </article>
+    <article>
+      <h3>5. Zero-shot 评估与安全</h3>
+      <ul>
+        <li>通过自然语言提示直接在翻译、摘要、阅读理解上评估，无需任务特定微调。</li>
+        <li>表现虽逊于任务专用模型，但已经具备“理解提示”的能力。</li>
+        <li>出于滥用风险，OpenAI 最初只发布了 117M/345M/774M 模型，直到半年后才开放 1.5B 版本。</li>
+      </ul>
+      <p>
+        GPT-2 标志着「扩容 + 纯自回归 + 提示工程」路线的可行性，为更大规模的 GPT-3 奠定基础。
+      </p>
+    </article>
+  </main>
+</BaseLayout>

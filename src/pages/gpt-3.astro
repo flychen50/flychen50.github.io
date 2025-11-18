@@ -1,0 +1,128 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteNav from "../components/SiteNav.astro";
+
+const title = "GPT-3 原理：175B 参数与提示学习";
+const description =
+  "拆解 GPT-3 的架构、训练数据和 In-Context Learning 现象，理解 175B 模型为何开启新范式。";
+---
+
+<BaseLayout title={title} description={description}>
+  <SiteNav current="/gpt-3" />
+  <header class="article-hero">
+    <a class="back-link" href="/">← 返回 Transformer 专题</a>
+    <span class="badge">2020 · OpenAI</span>
+    <h1>{title}</h1>
+    <p>
+      GPT-3 把参数量推到 175B，并首次系统性研究「提示即编程」：只给少量示例或任务描述，模型即可在推理阶段完成任务。这让
+      In-Context Learning 成为大模型标配；也让人们意识到规模扩展的强大。
+    </p>
+    <p class="article-meta">亮点：Mixture 数据、96 层解码器、Few-shot Prompting</p>
+  </header>
+  <main class="article">
+    <article>
+      <h3>1. 数据与计算规模</h3>
+      <ul>
+        <li>数据集：Common Crawl（过滤后 410B token）、WebText2、Books1/2、Wikipedia 等混合。</li>
+        <li>训练 token：300B，batch size 3.2M tokens，训练 355 GPU-years（V100）。</li>
+        <li>混合策略：对不同来源赋权，保证语料多样但不过度偏向爬虫数据。</li>
+      </ul>
+      <figure class="diagram">
+        <svg viewBox="0 0 820 260" role="img" aria-labelledby="gpt3-scaling">
+          <title id="gpt3-scaling">GPT-3 数据配比</title>
+          <rect x="60" y="60" width="180" height="140" rx="28" class="svg-block svg-block--encoder" />
+          <text x="90" y="110" class="svg-heading">Common Crawl</text>
+          <text x="110" y="150" class="svg-body">60%</text>
+          <rect x="280" y="60" width="110" height="140" rx="28" class="svg-block svg-block--decoder" />
+          <text x="300" y="110" class="svg-heading">WebText2</text>
+          <text x="315" y="150" class="svg-body">22%</text>
+          <rect x="420" y="60" width="110" height="140" rx="28" class="svg-block svg-block--decoder" />
+          <text x="445" y="110" class="svg-heading">Books</text>
+          <text x="460" y="150" class="svg-body">13%</text>
+          <rect x="560" y="60" width="110" height="140" rx="28" class="svg-block svg-block--decoder" />
+          <text x="575" y="110" class="svg-heading">Wiki</text>
+          <text x="585" y="150" class="svg-body">5%</text>
+          <rect x="700" y="60" width="70" height="140" rx="28" class="svg-block svg-block--op" />
+          <text x="710" y="120" class="svg-body">其它</text>
+          <text x="715" y="150" class="svg-body">2%</text>
+        </svg>
+        <figcaption>多数据混合 + 权重采样，减轻单一语料偏差。</figcaption>
+      </figure>
+    </article>
+    <article>
+      <h3>2. 架构细节</h3>
+      <ul>
+        <li>96 层 Transformer Decoder，隐藏维度 12,288，注意力头 96（每头 128 维）。</li>
+        <li>上下文长度 2048，进一步提升长文推理。</li>
+        <li>使用 Sparse Attention kernel（优化版），以更好利用 GPU。</li>
+        <li>优化器仍为 Adam，但梯度裁剪 + 混合精度以稳定训练。</li>
+      </ul>
+    </article>
+    <article>
+      <h3>3. In-Context Learning 机制</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 820 300" role="img" aria-labelledby="gpt3-icl">
+          <title id="gpt3-icl">提示学习示意</title>
+          <defs>
+            <marker
+              id="gpt3-arrow"
+              markerWidth="10"
+              markerHeight="10"
+              refX="4"
+              refY="3"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M0,0 L0,6 L6,3 z" fill="#cbd5f5" />
+            </marker>
+          </defs>
+          <rect x="40" y="40" width="740" height="80" rx="24" class="svg-block svg-block--encoder" />
+          <text x="60" y="80" class="svg-body">Task: Translate English to French.</text>
+          <rect x="40" y="140" width="740" height="80" rx="24" class="svg-block svg-block--decoder" />
+          <text x="60" y="180" class="svg-body">Few-shot examples: cat → chat, tree → arbre</text>
+          <rect x="40" y="240" width="420" height="50" rx="18" class="svg-block svg-block--op" />
+          <text x="60" y="270" class="svg-body">Prompt: dog → ?</text>
+          <rect x="500" y="240" width="280" height="50" rx="18" class="svg-block svg-block--decoder" />
+          <text x="520" y="270" class="svg-body">模型输出：chien</text>
+          <line x1="260" y1="265" x2="500" y2="265" class="svg-arrow" marker-end="url(#gpt3-arrow)" />
+        </svg>
+        <figcaption>无需更新权重，GPT-3 仅凭提示中的上下文示例就能完成任务。</figcaption>
+      </figure>
+      <ul>
+        <li>
+          <strong>Few-shot：</strong>给 10~100 条示例，性能接近专门微调的模型（例如 SuperGLUE 某些任务）。
+        </li>
+        <li>
+          <strong>One-shot：</strong>只给 1 条示例，仍有显著提升。
+        </li>
+        <li>
+          <strong>Zero-shot：</strong>仅用任务描述也能执行，是 GPT-2 Zero-shot 实验的加强版。
+        </li>
+      </ul>
+    </article>
+    <article>
+      <h3>4. 提示工程初步经验</h3>
+      <ul>
+        <li>提示最好明确任务 + 格式，例如 “Answer True or False”。</li>
+        <li>示例顺序与表述方式会影响输出，反映了模型对“上下文分布”的敏感性。</li>
+        <li>合适的温度（0.7 左右）和核采样（p=0.9）平衡多样性与可靠性。</li>
+      </ul>
+      <div class="callout">
+        <h4>API 化</h4>
+        <p>OpenAI 没有开源 GPT-3，只通过 API 提供，在工程侧推广 Prompt 设计与安全过滤。</p>
+      </div>
+    </article>
+    <article>
+      <h3>5. 局限与影响</h3>
+      <ul>
+        <li>训练成本极高（百万美元级），并带来能耗争议。</li>
+        <li>缺乏对知识更新的机制，需重新训练或借助 Retrieval-Augmented 技术。</li>
+        <li>易产生偏见与幻觉，推动后续安全、对齐研究。</li>
+      </ul>
+      <p>
+        GPT-3 之后，社区进入「Scaling Law + Prompting」时代，催生了 GPT-3.5/4、PaLM、LLaMA
+        等更大模型，也让提示工程成为开发者技能之一。
+      </p>
+    </article>
+  </main>
+</BaseLayout>

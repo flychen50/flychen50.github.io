@@ -32,16 +32,27 @@ npm run preview    # 预览构建结果
 ```
 ├── public/          # 静态资源 & CNAME
 ├── src/
+│   ├── components/  # SiteNav 等复用组件
 │   ├── layouts/
 │   │   └── BaseLayout.astro
 │   ├── pages/
-│   │   └── index.astro
+│   │   ├── index.astro   # Transformer 技术栈 + 原理
+│   │   ├── gpt-1.astro   # 2018 GPT-1
+│   │   ├── gpt-2.astro   # 2019 GPT-2
+│   │   └── gpt-3.astro   # 2020 GPT-3
 │   └── styles/
 │       └── global.css
 ├── astro.config.mjs # 站点元数据
 ├── package.json
 └── tsconfig.json
 ```
+
+## 已完成的文章
+
+- `/` Transformer 原理 + 博客技术栈建议
+- `/gpt-1` 预训练 + 任务微调
+- `/gpt-2` 大规模自回归与 zero-shot
+- `/gpt-3` 提示学习与 175B 模型
 
 ## 后续方向
 

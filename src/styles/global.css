@@ -159,6 +159,125 @@ main {
   margin-top: 0.35rem;
 }
 
+.site-nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 1rem clamp(1.5rem, 6vw, 4rem);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.site-nav .site-logo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.site-nav .site-logo:hover {
+  color: var(--accent);
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  color: var(--accent);
+}
+
+.site-nav .spacer {
+  flex: 1;
+}
+
+.articles {
+  margin-top: 4rem;
+}
+
+.article-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.article-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
+  padding: 1.75rem;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.article-card h3 {
+  margin: 0.5rem 0;
+}
+
+.article-card p {
+  flex: 1;
+}
+
+.article-card svg {
+  width: 140px;
+  position: absolute;
+  bottom: 0;
+  right: 0.5rem;
+  opacity: 0.5;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: var(--accent);
+}
+
+.article-meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.article-hero {
+  padding: 3rem clamp(1.5rem, 5vw, 4rem) 1rem;
+}
+
+.article-hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.article-hero p {
+  max-width: 720px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
 .tip {
   margin-top: 2rem;
   font-style: italic;
@@ -270,6 +389,19 @@ main {
   padding: 0.35rem 0.9rem;
   font-size: 0.9rem;
   color: var(--text-muted);
+}
+
+.callout {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.callout h4 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
 }
 
 blockquote {

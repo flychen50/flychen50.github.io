@@ -1,0 +1,28 @@
+---
+type Props = {
+  current?: string;
+};
+
+const links = [
+  { href: "/", label: "Transformer" },
+  { href: "/gpt-1", label: "GPT-1" },
+  { href: "/gpt-2", label: "GPT-2" },
+  { href: "/gpt-3", label: "GPT-3" },
+];
+
+const current = Astro.props.current ?? "/";
+---
+
+<nav class="site-nav">
+  <a href="/" class="site-logo">flychen · Notes</a>
+  {links.map((link) => (
+    <a
+      href={link.href}
+      class={['nav-link', current === link.href ? 'active' : ''].join(' ').trim()}
+    >
+      {link.label}
+    </a>
+  ))}
+  <span class="spacer" />
+  <a href="https://github.com/flychen50" target="_blank" rel="noreferrer">GitHub</a>
+</nav>
