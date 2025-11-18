@@ -2,9 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SiteNav from "../components/SiteNav.astro";
 
-const pageTitle = "Transformer 原理图文并茂指南 | flychen 博客";
-const description =
-  "把 GitHub Pages 静态站点升级为 Astro 博客的第一篇文章：从技术栈建议到 Transformer 原理图解。";
+const pageTitle = "Transformer 与 GPT 系列原理图解 | flychen 博客";
+const description = "围绕 Transformer 与 GPT-1/2/3 的核心原理、架构与训练细节，提供图文并茂的技术笔记。";
 const year = new Date().getFullYear();
 ---
 
@@ -12,15 +11,14 @@ const year = new Date().getFullYear();
   <SiteNav current="/" />
   <header class="hero">
     <div class="hero__content">
-      <p class="eyebrow">Personal Blog Draft · GitHub Pages Friendly</p>
-      <h1>Transformer 原理 · 图文速通</h1>
+      <p class="eyebrow">LLM Research Notes</p>
+      <h1>Transformer · GPT 系列原理图解</h1>
       <p class="lede">
-        这篇文章用通俗的语言、示意图与少量公式，带你拆解 Transformer
-        的工作流：从自注意力计算、多头机制到训练策略，一篇到位。
+        记录从 Transformer 到 GPT-1/2/3 的关键设计：自注意力、扩容策略、提示学习与采样技巧，用 SVG 图示和简明数学式辅助理解。
       </p>
       <div class="hero__cta">
-        <a class="btn" href="#stack">先看博客技术栈</a>
-        <a class="btn btn--ghost" href="#transformer">直接阅读 Transformer 教程</a>
+        <a class="btn" href="#transformer">阅读 Transformer 教程</a>
+        <a class="btn btn--ghost" href="#articles">跳转 GPT 专题</a>
       </div>
     </div>
     <figure class="hero__figure" aria-hidden="true">
@@ -138,56 +136,6 @@ const year = new Date().getFullYear();
           </svg>
         </a>
       </div>
-    </section>
-    <section id="stack" class="stack">
-      <div class="section-heading">
-        <p class="eyebrow">Blog Stack Notes</p>
-        <h2>GitHub Pages 上的博客技术栈建议</h2>
-        <p>
-          如果你想把这里升级为长期维护的个人博客，下面这套组合简单、现代又与 GitHub Pages 天然契合。
-        </p>
-      </div>
-      <div class="stack__grid">
-        <article class="card">
-          <h3>Astro + MDX</h3>
-          <p>
-            Astro 默认输出静态文件，部署到 <code>gh-pages</code> 分支即可。搭配 MDX 能在 Markdown 中写 React
-            组件，利于插入图表或交互 Demo。
-          </p>
-          <ul>
-            <li>结构清晰：<code>src/content/blog</code> 管文章</li>
-            <li>通过 <code>astro build</code> → <code>dist</code> 静态化</li>
-            <li>开箱支持 Sitemap、RSS 与渐进式增强</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>Tailwind CSS + UnoCSS Icons</h3>
-          <p>
-            Tailwind 让 UI 风格保持统一；若想轻量可换成原子化工具（UnoCSS），借助 <code>@apply</code>
-            写重复组件，效率很高。
-          </p>
-          <ul>
-            <li>设定 Design Token，配合深浅色模式</li>
-            <li>利用 Prose 插件美化 Markdown 排版</li>
-            <li>组件库可选 DaisyUI 或 Headless UI</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>GitHub Actions 部署</h3>
-          <p>
-            通过官方 <code>peaceiris/actions-gh-pages</code> action，把构建后的静态内容推送到
-            <code>gh-pages</code> 分支，全自动发布。
-          </p>
-          <ul>
-            <li>Workflow 触发：<code>on: push: branches: [main]</code></li>
-            <li>缓存 node_modules 或 pnpm，节省时间</li>
-            <li>配合 <code>pages-build-deployment</code> 保护分支</li>
-          </ul>
-        </article>
-      </div>
-      <p class="tip">
-        提示：现在仓库只有静态文件入口，你可以先用下面的 demo 作为起步页，后续再逐步替换为 Astro 项目。
-      </p>
     </section>
     <section id="transformer" class="article">
       <div class="section-heading">
@@ -351,6 +299,6 @@ const year = new Date().getFullYear();
   </main>
   <footer class="footer">
     <p>© {year} flychen | 写下对世界的好奇，分享每一次实验。</p>
-    <p>下一步：把该仓库迁移到 Astro，新增文章目录与标签页。</p>
+    <p>持续更新：Transformer 与大语言模型的实验笔记与思考。</p>
   </footer>
 </BaseLayout>
