@@ -20,10 +20,12 @@ npm run preview    # 预览构建结果
 
 ## 部署到 GitHub Pages
 
-1. 推荐使用 [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages) 工作流，在 `main` push 后执行 `npm install && npm run build`。
-2. 将 `dist/` 发布到 `gh-pages` 分支（或 `docs/` 目录）以保持 `main` 干净。
-3. 若使用自定义域名，确保 workflow 把 `public/CNAME` 同步到发布分支；本仓库已经内置该文件。
-4. 在仓库的 **Pages** 设置中把发布源指向 `gh-pages` → `/`。
+本仓库已内置 `.github/workflows/deploy.yml`，使用 GitHub 官方 Pages workflow。
+
+1. 在 GitHub → **Settings → Pages** 中将 **Build and deployment** 的 Source 设置为 **GitHub Actions**。
+2. 每次向 `main` 推送代码都会触发 workflow：`npm ci && npm run build`，并将 `dist/` 打包成 artifact。
+3. `actions/deploy-pages` 负责把 artifact 发布到 Pages 环境；`public/CNAME` 会自动被包含进构建目录，保持自定义域生效。
+4. 如需手动触发或回滚，可在 Actions 选项卡中运行/重新运行 workflow（支持 `workflow_dispatch`）。
 
 ## 目录结构
 
