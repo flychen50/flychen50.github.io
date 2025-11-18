@@ -18,15 +18,6 @@ npm run build      # 产出静态文件到 dist/
 npm run preview    # 预览构建结果
 ```
 
-## 部署到 GitHub Pages
-
-本仓库已内置 `.github/workflows/deploy.yml`，使用 GitHub 官方 Pages workflow。
-
-1. 在 GitHub → **Settings → Pages** 中将 **Build and deployment** 的 Source 设置为 **GitHub Actions**。
-2. 每次向 `main` 推送代码都会触发 workflow：`npm ci && npm run build`，并将 `dist/` 打包成 artifact。
-3. `actions/deploy-pages` 负责把 artifact 发布到 Pages 环境；`public/CNAME` 会自动被包含进构建目录，保持自定义域生效。
-4. 如需手动触发或回滚，可在 Actions 选项卡中运行/重新运行 workflow（支持 `workflow_dispatch`）。
-
 ## 目录结构
 
 ```
@@ -36,7 +27,7 @@ npm run preview    # 预览构建结果
 │   ├── layouts/
 │   │   └── BaseLayout.astro
 │   ├── pages/
-│   │   ├── index.astro   # Transformer 技术栈 + 原理
+│   │   ├── index.astro   # Transformer 原理
 │   │   ├── gpt-1.astro   # 2018 GPT-1
 │   │   ├── gpt-2.astro   # 2019 GPT-2
 │   │   └── gpt-3.astro   # 2020 GPT-3
@@ -58,4 +49,4 @@ npm run preview    # 预览构建结果
 
 - 使用 `src/content/blog` + MDX 撰写更多文章，抽出卡片/图表组件。
 - 集成 Tailwind（`npx astro add tailwind`）或 UnoCSS，方便主题扩展。
-- 新增 RSS、Sitemap、文章列表与标签导航，并配置 GitHub Actions workflow。
+- 新增 RSS、Sitemap、文章列表与标签导航，并配置自动部署 workflow。
